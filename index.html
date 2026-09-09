@@ -1,0 +1,838 @@
+<title>Pythagoras Quest Övning</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #eef2f6;
+    --bg-grid: #e0e7ee;
+    --surface: #ffffff;
+    --surface-2: #e4eaf1;
+    --ink: #10202f;
+    --ink-soft: #526270;
+    --ink-faint: #8493a1;
+    --line: #cfd9e2;
+    --accent: #2458a4;
+    --accent-ink: #ffffff;
+    --accent-soft: #dbe6f5;
+    --gold: #b9821a;
+    --gold-soft: #f5e8cc;
+    --good: #21804f;
+    --good-soft: #dcf0e4;
+    --bad: #bc3f34;
+    --bad-soft: #fbe1de;
+    --radius-s: 8px;
+    --radius-m: 14px;
+    --radius-l: 22px;
+    --shadow: 0 1px 2px rgba(16, 32, 47, 0.06), 0 8px 24px -12px rgba(16, 32, 47, 0.18);
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b141e;
+      --bg-grid: #101c28;
+      --surface: #121f2c;
+      --surface-2: #1a2b3a;
+      --ink: #e8eef4;
+      --ink-soft: #a7b6c4;
+      --ink-faint: #71828f;
+      --line: #263646;
+      --accent: #6fa3e0;
+      --accent-ink: #0b141e;
+      --accent-soft: #1c3654;
+      --gold: #e3b148;
+      --gold-soft: #3a2f14;
+      --good: #59c68b;
+      --good-soft: #163827;
+      --bad: #e2796d;
+      --bad-soft: #3a1e1a;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px -12px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0b141e;
+    --bg-grid: #101c28;
+    --surface: #121f2c;
+    --surface-2: #1a2b3a;
+    --ink: #e8eef4;
+    --ink-soft: #a7b6c4;
+    --ink-faint: #71828f;
+    --line: #263646;
+    --accent: #6fa3e0;
+    --accent-ink: #0b141e;
+    --accent-soft: #1c3654;
+    --gold: #e3b148;
+    --gold-soft: #3a2f14;
+    --good: #59c68b;
+    --good-soft: #163827;
+    --bad: #e2796d;
+    --bad-soft: #3a1e1a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px -12px rgba(0, 0, 0, 0.55);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  body {
+    margin: 0;
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0 / 100% 28px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0 / 28px 100%,
+      var(--bg);
+    color: var(--ink);
+    font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; text-wrap: balance; margin: 0; }
+
+  .mono { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 20px 20px 64px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 4px 22px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    flex: none;
+  }
+
+  .brand-text h1 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .brand-text p {
+    margin: 1px 0 0;
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .ring-wrap { position: relative; width: 46px; height: 46px; flex: none; }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-track { fill: none; stroke: var(--line); stroke-width: 4; }
+  .ring-fill { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray 0.5s ease; }
+  .ring-label {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.62rem; font-weight: 600; color: var(--ink-soft);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow);
+    padding: 28px;
+  }
+
+  section[hidden] { display: none !important; }
+
+  /* Intro */
+  .intro-card { padding: 34px 30px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+    background: var(--accent-soft); padding: 5px 10px; border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  .intro-card h2 { font-size: 1.7rem; font-weight: 600; margin-bottom: 12px; }
+  .intro-card p.lead { color: var(--ink-soft); font-size: 1rem; max-width: 54ch; margin-bottom: 22px; }
+
+  .step-list { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 12px; }
+  .step-list li {
+    display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start;
+    font-size: 0.92rem; color: var(--ink-soft);
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2);
+    color: var(--ink); font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-list b { color: var(--ink); }
+
+  .btn {
+    appearance: none; border: none; cursor: pointer;
+    font-family: "Public Sans", sans-serif; font-weight: 600; font-size: 0.95rem;
+    padding: 13px 22px; border-radius: var(--radius-s);
+    background: var(--accent); color: var(--accent-ink);
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgba(36, 88, 164, 0.5); }
+  .btn:active { transform: translateY(0); }
+  .btn.ghost {
+    background: transparent; color: var(--ink-soft); border: 1px solid var(--line);
+  }
+  .btn.ghost:hover { box-shadow: none; border-color: var(--ink-faint); }
+  .btn:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+
+  .sample-note { font-size: 0.78rem; color: var(--ink-faint); margin-top: 18px; }
+
+  /* Quiz */
+  .quiz-progress {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+  }
+  .dots { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+  .dot.done { background: var(--accent); }
+  .dot.now { background: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
+  .quiz-progress .count { font-size: 0.75rem; color: var(--ink-faint); margin-left: auto; }
+
+  .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .tag {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; font-weight: 600;
+    letter-spacing: 0.03em; padding: 4px 9px; border-radius: 999px;
+    background: var(--surface-2); color: var(--ink-soft);
+  }
+  .tag.cat { background: var(--accent-soft); color: var(--accent); }
+  .tag.weak { background: var(--gold-soft); color: var(--gold); }
+
+  .q-text { font-size: 1.15rem; line-height: 1.55; margin-bottom: 22px; white-space: pre-wrap; }
+
+  .options { display: grid; gap: 10px; }
+  .option {
+    display: flex; align-items: flex-start; gap: 12px;
+    text-align: left; width: 100%;
+    background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-m);
+    padding: 13px 16px; cursor: pointer; font-size: 0.98rem; color: var(--ink);
+    transition: border-color 0.12s ease, background 0.12s ease;
+  }
+  .option:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+  .option .letter {
+    font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 0.85rem;
+    width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center; flex: none; margin-top: 1px;
+  }
+  .option:disabled { cursor: default; }
+  .option.correct { border-color: var(--good); background: var(--good-soft); }
+  .option.correct .letter { background: var(--good); color: var(--good-soft); }
+  .option.wrong { border-color: var(--bad); background: var(--bad-soft); }
+  .option.wrong .letter { background: var(--bad); color: var(--bad-soft); }
+  .option.dim { opacity: 0.55; }
+
+  .feedback {
+    margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-m);
+    font-size: 0.92rem; display: none; gap: 10px; border: 1px solid transparent;
+  }
+  .feedback.show { display: block; }
+  .feedback.good { background: var(--good-soft); color: var(--good); border-color: color-mix(in srgb, var(--good) 30%, transparent); }
+  .feedback.bad { background: var(--bad-soft); color: var(--bad); border-color: color-mix(in srgb, var(--bad) 30%, transparent); }
+  .feedback .solution { color: var(--ink-soft); margin-top: 6px; font-size: 0.88rem; }
+
+  .quiz-footer { display: flex; justify-content: flex-end; margin-top: 20px; }
+
+  /* Results / dashboard */
+  .results-head { margin-bottom: 22px; }
+  .results-head h2 { font-size: 1.5rem; margin-bottom: 6px; }
+  .results-head p { color: var(--ink-soft); font-size: 0.94rem; }
+
+  .cat-bars { display: grid; gap: 14px; margin: 22px 0 26px; }
+  .cat-bar-row { display: grid; grid-template-columns: 168px 1fr 44px; align-items: center; gap: 12px; }
+  .cat-bar-name { font-size: 0.86rem; color: var(--ink); display: flex; align-items: center; gap: 7px; }
+  .cat-bar-track { height: 10px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .cat-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
+  .cat-bar-fill.weak { background: var(--gold); }
+  .cat-bar-pct { font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; text-align: right; color: var(--ink-soft); }
+
+  .stat-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-m);
+    overflow: hidden; margin-bottom: 26px;
+  }
+  .stat-cell { background: var(--surface); padding: 14px 12px; text-align: center; }
+  .stat-cell .num { font-family: "IBM Plex Mono", monospace; font-size: 1.3rem; font-weight: 600; }
+  .stat-cell .lbl { font-size: 0.7rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+  .practice-topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .mini-stats { display: flex; gap: 16px; font-size: 0.8rem; color: var(--ink-soft); }
+  .mini-stats b { color: var(--ink); font-family: "IBM Plex Mono", monospace; }
+  .link-btn {
+    background: none; border: none; color: var(--ink-soft); font-size: 0.8rem; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px; padding: 0;
+  }
+
+  .dash-panel {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 20px 20px 6px; margin-bottom: 18px;
+  }
+  .dash-panel h3 { font-size: 0.92rem; margin-bottom: 14px; }
+
+  footer.page {
+    text-align: center; margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  footer.page .reset { font-size: 0.76rem; color: var(--ink-faint); background: none; border: none; cursor: pointer; text-decoration: underline; }
+  footer.page .colophon { font-size: 0.74rem; color: var(--ink-faint); }
+
+  @media (max-width: 520px) {
+    .cat-bar-row { grid-template-columns: 108px 1fr 38px; }
+    .card { padding: 20px; }
+    .intro-card { padding: 26px 20px; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M4 32 L18 8 L32 32 Z" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round" fill="var(--accent-soft)"/>
+        <path d="M4 32 L18 32 L18 8" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" fill="none"/>
+        <rect x="16.2" y="26.2" width="3.6" height="3.6" stroke="var(--gold)" stroke-width="1.6" fill="none"/>
+      </svg>
+      <div class="brand-text">
+        <h1>Pythagoras Quest</h1>
+        <p id="brandSub">Övningsbanken</p>
+      </div>
+    </div>
+    <div class="ring-wrap" id="ringWrap" title="Framsteg">
+      <svg width="46" height="46" viewBox="0 0 46 46">
+        <circle class="ring-track" cx="23" cy="23" r="19"></circle>
+        <circle class="ring-fill" id="ringFill" cx="23" cy="23" r="19" stroke-dasharray="0 999"></circle>
+      </svg>
+      <div class="ring-label" id="ringLabel">0%</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- INTRO -->
+    <section id="screen-intro" class="card intro-card">
+      <span class="eyebrow">Verkliga tävlingsuppgifter, 2014–2026</span>
+      <h2>Testa vad du kan. Öva där det räknas.</h2>
+      <p class="lead">Frågebanken är hämtad direkt ur tidigare Kvaltävlingar, Distriktsfinaler och Riksfinaler i Pythagoras Quest. Du börjar med ett kort diagnostiskt test, sedan anpassas övningen automatiskt efter de områden du behöver träna mest på.</p>
+
+      <ul class="step-list">
+        <li><span class="step-num">1</span><span><b>Diagnostiskt test.</b> Cirka tolv blandade flervalsfrågor från olika år och områden, för att se var du står idag.</span></li>
+        <li><span class="step-num">2</span><span><b>Din profil.</b> Direkt efteråt ser du träffsäkerhet per område: aritmetik, algebra, geometri, talteori, sannolikhet och logik.</span></li>
+        <li><span class="step-num">3</span><span><b>Anpassad övning.</b> Appen väljer fler frågor från dina svagaste områden, och färre från det du redan behärskar.</span></li>
+      </ul>
+
+      <button class="btn" id="btnStart">Starta diagnostiskt test</button>
+      <p class="sample-note" id="introNote"></p>
+    </section>
+
+    <!-- DIAGNOSTIC / PRACTICE (shared question view) -->
+    <section id="screen-quiz" class="card" hidden>
+      <div id="practiceTopbar" class="practice-topbar" hidden>
+        <div class="mini-stats">
+          <span>Rätt just nu <b id="statStreak">0</b></span>
+          <span>Bästa <b id="statBest">0</b></span>
+          <span>Övade totalt <b id="statTotal">0</b></span>
+        </div>
+        <button class="link-btn" id="btnToggleDash">Visa min profil</button>
+      </div>
+
+      <div id="dashPanel" class="dash-panel" hidden>
+        <h3>Träffsäkerhet per område</h3>
+        <div class="cat-bars" id="dashBars"></div>
+      </div>
+
+      <div id="diagProgress" class="quiz-progress" hidden>
+        <div class="dots" id="diagDots"></div>
+        <span class="count mono" id="diagCount"></span>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag cat" id="qCategory">Kategori</span>
+        <span class="tag" id="qSource">Källa</span>
+        <span class="tag weak" id="qWeakFlag" hidden>Svagt område</span>
+      </div>
+
+      <p class="q-text" id="qText">Fråga…</p>
+      <div class="options" id="qOptions"></div>
+
+      <div class="feedback" id="qFeedback">
+        <div id="qFeedbackHead"></div>
+        <div class="solution" id="qFeedbackSolution"></div>
+      </div>
+
+      <div class="quiz-footer">
+        <button class="btn" id="btnNext" hidden>Nästa fråga →</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="screen-results" class="card" hidden>
+      <div class="results-head">
+        <h2>Så här ser din profil ut</h2>
+        <p id="resultsSummary"></p>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat-cell"><div class="num mono" id="rTotal">0</div><div class="lbl">Frågor</div></div>
+        <div class="stat-cell"><div class="num mono" id="rCorrect">0</div><div class="lbl">Rätt</div></div>
+        <div class="stat-cell"><div class="num mono" id="rPct">0%</div><div class="lbl">Träffsäkerhet</div></div>
+      </div>
+
+      <div class="cat-bars" id="resultsBars"></div>
+
+      <button class="btn" id="btnStartAdaptive">Starta anpassad övning →</button>
+    </section>
+  </main>
+
+  <footer class="page">
+    <button class="reset" id="btnReset">Återställ mina framsteg</button>
+    <span class="colophon">Byggd på riktiga uppgifter från Pythagoras Quest, en matematiktävling för högstadieelever.</span>
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+/* ============ DATA ============
+   Platshållardata: verifierade uppgifter från Kvaltävlingen 2014.
+   Ersätts med den fullständiga frågebanken (alla år/omgångar) i nästa steg. */
+const CATEGORIES = {
+  aritmetik: "Aritmetik",
+  algebra: "Algebra",
+  geometri: "Geometri",
+  talteori: "Talteori",
+  kombinatorik_sannolikhet: "Sannolikhet & statistik",
+  logik_problemlosning: "Logik & problemlösning"
+};
+
+const QUESTIONS = [
+  {
+    id: "kval-2014-1", category: "aritmetik", difficulty: 1, year: "2014", round: "Kvaltävling",
+    question: "Vad är summan av 10² + 10 + 1?",
+    options: ["101", "1035", "1011", "111", "31"], answerIndex: 3
+  },
+  {
+    id: "kval-2014-3", category: "aritmetik", difficulty: 2, year: "2014", round: "Kvaltävling",
+    question: "Ett företag säljer dörrar för 1000 kr styck. Om man köper 4 dörrar får man den femte utan extra kostnad. Stuart behöver 8 dörrar och Lois 7 dörrar. Hur mycket kan de spara på att köpa dörrarna tillsammans istället för var för sig?",
+    options: ["1000 kr", "2000 kr", "3000 kr", "4000 kr", "5000 kr"], answerIndex: 0
+  },
+  {
+    id: "kval-2014-4", category: "aritmetik", difficulty: 2, year: "2014", round: "Kvaltävling",
+    question: "Sture och Vivi delade på en pizza skuren i 8 lika stora delar. Vivi ville ha enkel pizza (tomat och ost) medan Sture ville ha extra pålägg (anjovis) på sin halva. En enkel pizza kostade 8 USD, och extra anjovis på halva pizzan kostade 2 USD extra. Sture åt alla sina delar och en av Vivis delar, Vivi åt resten. Var och en betalade för det de åt. Hur mycket mer betalade Sture än Vivi?",
+    options: ["1 USD", "2 USD", "3 USD", "4 USD", "5 USD"], answerIndex: 3
+  },
+  {
+    id: "kval-2014-5", category: "kombinatorik_sannolikhet", difficulty: 3, year: "2014", round: "Kvaltävling",
+    question: "Medianen för talen n, n+3, n+4, n+5, n+6, n+8, n+10, n+12, n+15 är 10. Vilket är medelvärdet?",
+    options: ["4", "6", "7", "10", "11"], answerIndex: 4
+  },
+  {
+    id: "kval-2014-6", category: "logik_problemlosning", difficulty: 3, year: "2014", round: "Kvaltävling",
+    question: "På Pythagoras olympiska spel deltar 480 elever. Varje elev deltar i 4 grenar. Varje gren har 20 deltagare och en domare. Det finns 16 domare, och varje domare dömer lika många grenar. Hur många grenar dömer varje domare?",
+    options: ["12", "8", "6", "16", "15"], answerIndex: 2
+  },
+  {
+    id: "kval-2014-8", category: "logik_problemlosning", difficulty: 3, year: "2014", round: "Kvaltävling",
+    question: "Einstein (E), Newton (N) och Celsius (C) går i samma högstadieklass. De är alla olika långa, men bara ett av följande tre påståenden är sant: (1) Einstein är längst. (2) Newton är inte kortast. (3) Celsius är inte längst. Ställer man upp eleverna från kortast till längst, i vilken ordning står de då?",
+    options: ["N, C, E", "C, E, N", "E, N, C", "N, E, C", "E, C, N"], answerIndex: 2
+  },
+  {
+    id: "kval-2014-9", category: "talteori", difficulty: 3, year: "2014", round: "Kvaltävling",
+    question: "Årtalet 2014 kan skrivas som en produkt av tre olika positiva heltal A·B·C. Vilken är den största summan A + B + C kan anta?",
+    options: ["74", "92", "126", "1007", "1010"], answerIndex: 4
+  },
+  {
+    id: "kval-2014-12", category: "talteori", difficulty: 2, year: "2014", round: "Kvaltävling",
+    question: "När Ulf redovisade sitt resultat råkade han byta plats på tiotals och entalssiffran. Vilket av alternativen nedan kan ha varit skillnaden mellan hans redovisade resultat och det korrekta resultatet?",
+    options: ["45", "46", "47", "48", "49"], answerIndex: 0
+  },
+  {
+    id: "kval-2014-13", category: "kombinatorik_sannolikhet", difficulty: 3, year: "2014", round: "Kvaltävling",
+    question: "Fyra elever, Julia, Karin, Nazanin och Cecilia, representerade skolan vid olika lagtävlingar i matematik. Varje lag bestod av tre av de fyra eleverna. Julia deltog i 7 tävlingar, fler än någon annan. Cecilia deltog i 4 tävlingar, färre än någon annan. Vid hur många lagtävlingar deltog skolan totalt?",
+    options: ["7", "8", "9", "10", "11"], answerIndex: 0
+  },
+  {
+    id: "kval-2014-14", category: "algebra", difficulty: 3, year: "2014", round: "Kvaltävling",
+    question: "Att skotta bort all snö från vägen till en stuga tar Stina 12 timmar, Fredrik 8 timmar, Susanna 6 timmar och Anna 4 timmar, var och en på egen hand. Om alla fyra arbetar tillsammans, hur många minuter tar det att få bort snön?",
+    options: ["108", "120", "84", "96", "90"], answerIndex: 3
+  },
+  {
+    id: "kval-2014-7", category: "algebra", difficulty: 3, year: "2014", round: "Kvaltävling",
+    question: "När summan och produkten av 2/3 och 1½ subtraheras från varandra (produkten minus summan), vad blir differensen?",
+    options: ["4/15", "1 1/6", "0", "1 3/5", "5/6"], answerIndex: 1
+  }
+];
+
+/* ============ STATE ============ */
+const STORAGE_KEY = "pq_progress_v1";
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return {
+    phase: "intro",
+    diagnosticQueue: [],
+    diagnosticIndex: 0,
+    diagnosticResults: [],
+    categoryStats: {},
+    totalAnswered: 0,
+    totalCorrect: 0,
+    streak: 0,
+    bestStreak: 0,
+    recentIds: []
+  };
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+let state = loadState();
+let currentQuestion = null;
+let dashVisible = false;
+
+/* ============ HELPERS ============ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function byId(id) { return document.getElementById(id); }
+
+function questionById(id) { return QUESTIONS.find(q => q.id === id); }
+
+function ensureCatStats(cat) {
+  if (!state.categoryStats[cat]) state.categoryStats[cat] = { attempts: 0, correct: 0 };
+  return state.categoryStats[cat];
+}
+
+function categoryAccuracy(cat) {
+  const s = state.categoryStats[cat];
+  if (!s || s.attempts === 0) return null;
+  return s.correct / s.attempts;
+}
+
+function weakestCategories() {
+  return Object.keys(CATEGORIES)
+    .map(cat => ({ cat, acc: categoryAccuracy(cat) }))
+    .filter(c => c.acc !== null)
+    .sort((a, b) => a.acc - b.acc);
+}
+
+/* ============ DIAGNOSTIC SELECTION ============ */
+function buildDiagnosticQueue(target = 12, perCategory = 2) {
+  const byCat = {};
+  Object.keys(CATEGORIES).forEach(c => byCat[c] = []);
+  QUESTIONS.forEach(q => { if (byCat[q.category]) byCat[q.category].push(q.id); });
+
+  let picked = [];
+  Object.keys(byCat).forEach(cat => {
+    picked = picked.concat(shuffle(byCat[cat]).slice(0, perCategory));
+  });
+
+  if (picked.length < target) {
+    const remaining = shuffle(QUESTIONS.map(q => q.id).filter(id => !picked.includes(id)));
+    for (const id of remaining) {
+      if (picked.length >= target) break;
+      picked.push(id);
+    }
+  }
+  if (picked.length > target) picked = picked.slice(0, target);
+  return shuffle(picked);
+}
+
+/* ============ ADAPTIVE SELECTION ============ */
+function pickAdaptiveQuestion() {
+  const weights = {};
+  Object.keys(CATEGORIES).forEach(cat => {
+    const acc = categoryAccuracy(cat);
+    weights[cat] = acc === null ? 0.75 : Math.max(0.12, 1 - acc);
+  });
+
+  const catsWithQuestions = Object.keys(weights).filter(
+    cat => QUESTIONS.some(q => q.category === cat)
+  );
+  const totalWeight = catsWithQuestions.reduce((s, c) => s + weights[c], 0);
+  let r = Math.random() * totalWeight;
+  let chosenCat = catsWithQuestions[0];
+  for (const cat of catsWithQuestions) {
+    r -= weights[cat];
+    if (r <= 0) { chosenCat = cat; break; }
+  }
+
+  const pool = QUESTIONS.filter(q => q.category === chosenCat);
+  let candidates = pool.filter(q => !state.recentIds.includes(q.id));
+  if (candidates.length === 0) candidates = pool;
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+/* ============ RENDER: header ring ============ */
+function renderRing() {
+  const ring = byId("ringFill");
+  const label = byId("ringLabel");
+  let pct = 0;
+  if (state.phase === "diagnostic") {
+    pct = state.diagnosticQueue.length
+      ? Math.round((state.diagnosticIndex / state.diagnosticQueue.length) * 100)
+      : 0;
+  } else if (state.phase === "practice" || state.phase === "results") {
+    const accs = weakestCategories();
+    pct = accs.length
+      ? Math.round((accs.reduce((s, c) => s + c.acc, 0) / accs.length) * 100)
+      : 0;
+  }
+  const circumference = 2 * Math.PI * 19;
+  const filled = (pct / 100) * circumference;
+  ring.setAttribute("stroke-dasharray", `${filled} ${circumference}`);
+  label.textContent = pct + "%";
+}
+
+/* ============ RENDER: question ============ */
+function showQuestion(q, opts) {
+  currentQuestion = q;
+  const isDiag = opts && opts.diagnostic;
+
+  byId("qCategory").textContent = CATEGORIES[q.category];
+  byId("qSource").textContent = q.round + " " + q.year;
+  const acc = categoryAccuracy(q.category);
+  byId("qWeakFlag").hidden = !(acc !== null && acc < 0.5 && !isDiag);
+  byId("qText").textContent = q.question;
+
+  const optWrap = byId("qOptions");
+  optWrap.innerHTML = "";
+  const letters = ["A", "B", "C", "D", "E"];
+  q.options.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "option";
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    b.addEventListener("click", () => handleAnswer(i));
+    optWrap.appendChild(b);
+  });
+
+  byId("qFeedback").className = "feedback";
+  byId("btnNext").hidden = true;
+
+  byId("diagProgress").hidden = !isDiag;
+  byId("practiceTopbar").hidden = !!isDiag;
+  if (isDiag) renderDiagDots();
+  if (!isDiag) renderMiniStats();
+  renderRing();
+}
+
+function renderDiagDots() {
+  const wrap = byId("diagDots");
+  wrap.innerHTML = "";
+  state.diagnosticQueue.forEach((id, i) => {
+    const d = document.createElement("span");
+    d.className = "dot" + (i < state.diagnosticIndex ? " done" : i === state.diagnosticIndex ? " now" : "");
+    wrap.appendChild(d);
+  });
+  byId("diagCount").textContent = `${state.diagnosticIndex + 1} / ${state.diagnosticQueue.length}`;
+}
+
+function renderMiniStats() {
+  byId("statStreak").textContent = state.streak;
+  byId("statBest").textContent = state.bestStreak;
+  byId("statTotal").textContent = state.totalAnswered;
+}
+
+function handleAnswer(choiceIndex) {
+  const q = currentQuestion;
+  const correct = choiceIndex === q.answerIndex;
+  const buttons = byId("qOptions").querySelectorAll(".option");
+  buttons.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.answerIndex) b.classList.add("correct");
+    else if (i === choiceIndex) b.classList.add("wrong");
+    else b.classList.add("dim");
+  });
+
+  const stats = ensureCatStats(q.category);
+  stats.attempts++;
+  if (correct) stats.correct++;
+
+  state.totalAnswered++;
+  if (correct) {
+    state.totalCorrect++;
+    state.streak++;
+    state.bestStreak = Math.max(state.bestStreak, state.streak);
+  } else {
+    state.streak = 0;
+  }
+  state.recentIds.push(q.id);
+  if (state.recentIds.length > 8) state.recentIds.shift();
+
+  const fb = byId("qFeedback");
+  fb.className = "feedback show " + (correct ? "good" : "bad");
+  byId("qFeedbackHead").textContent = correct
+    ? "Rätt svar."
+    : `Fel svar. Rätt svar var ${["A","B","C","D","E"][q.answerIndex]}: ${q.options[q.answerIndex]}`;
+  byId("qFeedbackSolution").textContent = q.solution || "";
+
+  byId("btnNext").hidden = false;
+
+  if (state.phase === "diagnostic") {
+    state.diagnosticResults.push({ id: q.id, category: q.category, correct });
+  }
+
+  saveState();
+  renderRing();
+  if (state.phase !== "diagnostic") renderMiniStats();
+}
+
+/* ============ FLOW CONTROL ============ */
+function goIntro() {
+  state.phase = "intro";
+  byId("screen-intro").hidden = false;
+  byId("screen-quiz").hidden = true;
+  byId("screen-results").hidden = true;
+  const attempted = Object.values(state.categoryStats).reduce((s, c) => s + c.attempts, 0);
+  byId("introNote").textContent = attempted > 0
+    ? "Du har tidigare framsteg sparade i den här webbläsaren. Klicka för att fortsätta öva."
+    : `Frågebanken innehåller just nu ${QUESTIONS.length} verifierade uppgifter, fler tillkommer.`;
+  byId("btnStart").textContent = attempted > 0 ? "Fortsätt öva" : "Starta diagnostiskt test";
+  saveState();
+}
+
+function startDiagnostic() {
+  if (Object.values(state.categoryStats).reduce((s, c) => s + c.attempts, 0) > 0) {
+    goPractice();
+    return;
+  }
+  state.phase = "diagnostic";
+  state.diagnosticQueue = buildDiagnosticQueue(12, 2);
+  state.diagnosticIndex = 0;
+  state.diagnosticResults = [];
+  byId("screen-intro").hidden = true;
+  byId("screen-results").hidden = true;
+  byId("screen-quiz").hidden = false;
+  saveState();
+  showQuestion(questionById(state.diagnosticQueue[0]), { diagnostic: true });
+}
+
+function nextDiagnostic() {
+  state.diagnosticIndex++;
+  if (state.diagnosticIndex >= state.diagnosticQueue.length) {
+    goResults();
+    return;
+  }
+  saveState();
+  showQuestion(questionById(state.diagnosticQueue[state.diagnosticIndex]), { diagnostic: true });
+}
+
+function goResults() {
+  state.phase = "results";
+  byId("screen-quiz").hidden = true;
+  byId("screen-results").hidden = false;
+
+  const total = state.diagnosticResults.length;
+  const correct = state.diagnosticResults.filter(r => r.correct).length;
+  byId("rTotal").textContent = total;
+  byId("rCorrect").textContent = correct;
+  byId("rPct").textContent = total ? Math.round((correct / total) * 100) + "%" : "0%";
+
+  const weak = weakestCategories();
+  byId("resultsSummary").textContent = weak.length
+    ? `Ditt starkaste område är ${CATEGORIES[weak[weak.length - 1].cat]}. Fokusera gärna på ${CATEGORIES[weak[0].cat]} härnäst.`
+    : "Fortsätt öva för att bygga upp din profil.";
+
+  renderBars(byId("resultsBars"));
+  saveState();
+  renderRing();
+}
+
+function renderBars(container) {
+  container.innerHTML = "";
+  const rows = Object.keys(CATEGORIES).map(cat => {
+    const acc = categoryAccuracy(cat);
+    return { cat, acc: acc === null ? 0 : acc, has: acc !== null };
+  });
+  rows.sort((a, b) => a.acc - b.acc);
+  rows.forEach(row => {
+    const pct = Math.round(row.acc * 100);
+    const div = document.createElement("div");
+    div.className = "cat-bar-row";
+    div.innerHTML = `
+      <div class="cat-bar-name">${CATEGORIES[row.cat]}</div>
+      <div class="cat-bar-track"><div class="cat-bar-fill${row.has && row.acc < 0.5 ? " weak" : ""}" style="width:${row.has ? pct : 0}%"></div></div>
+      <div class="cat-bar-pct mono">${row.has ? pct + "%" : "–"}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function goPractice() {
+  state.phase = "practice";
+  byId("screen-results").hidden = true;
+  byId("screen-intro").hidden = true;
+  byId("screen-quiz").hidden = false;
+  saveState();
+  showQuestion(pickAdaptiveQuestion(), { diagnostic: false });
+}
+
+function nextPractice() {
+  showQuestion(pickAdaptiveQuestion(), { diagnostic: false });
+}
+
+function toggleDash() {
+  dashVisible = !dashVisible;
+  byId("dashPanel").hidden = !dashVisible;
+  byId("btnToggleDash").textContent = dashVisible ? "Dölj min profil" : "Visa min profil";
+  if (dashVisible) renderBars(byId("dashBars"));
+}
+
+/* ============ EVENTS ============ */
+byId("btnStart").addEventListener("click", startDiagnostic);
+byId("btnStartAdaptive").addEventListener("click", goPractice);
+byId("btnToggleDash").addEventListener("click", toggleDash);
+byId("btnNext").addEventListener("click", () => {
+  if (state.phase === "diagnostic") nextDiagnostic();
+  else nextPractice();
+});
+byId("btnReset").addEventListener("click", () => {
+  if (confirm("Vill du radera dina sparade framsteg i den här webbläsaren?")) {
+    localStorage.removeItem(STORAGE_KEY);
+    state = loadState();
+    goIntro();
+  }
+});
+
+/* ============ INIT ============ */
+(function init() {
+  if (state.phase === "diagnostic" && state.diagnosticQueue.length) {
+    byId("screen-intro").hidden = true;
+    byId("screen-quiz").hidden = false;
+    const idx = Math.min(state.diagnosticIndex, state.diagnosticQueue.length - 1);
+    showQuestion(questionById(state.diagnosticQueue[idx]), { diagnostic: true });
+  } else if (state.phase === "practice") {
+    goPractice();
+  } else if (state.phase === "results") {
+    goResults();
+  } else {
+    goIntro();
+  }
+  renderRing();
+})();
+</script>
