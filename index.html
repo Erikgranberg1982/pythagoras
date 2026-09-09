@@ -107,6 +107,12 @@
     justify-content: space-between;
     gap: 16px;
     padding: 14px 4px 22px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 480px) {
+    header.top { justify-content: center; text-align: center; }
+    .house-chip { white-space: normal; text-align: center; }
+    .house-chip .hc-top { justify-content: center; }
   }
 
   .brand {
@@ -299,6 +305,7 @@
     .cat-bar-row { grid-template-columns: 108px 1fr 38px; }
     .card { padding: 20px; }
     .intro-card { padding: 26px 20px; }
+    .house-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   /* Onboarding: name + house */
@@ -318,26 +325,41 @@
   .name-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .house-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .house-btn {
-    appearance: none; cursor: pointer; text-align: center; padding: 10px 6px;
-    border-radius: var(--radius-s); border: 1.5px solid var(--line); background: var(--surface);
-    font-family: "Public Sans", sans-serif; font-weight: 600; font-size: 0.78rem; color: var(--ink-soft);
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    appearance: none; cursor: pointer; text-align: center; padding: 12px 6px 10px;
+    border-radius: var(--radius-m); border: 1.5px solid var(--line); background: var(--surface);
+    font-family: "Public Sans", sans-serif; font-weight: 600; font-size: 0.76rem; color: var(--ink-soft);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
   }
-  .house-btn .crest { width: 20px; height: 20px; border-radius: 50%; }
-  .house-btn.picked { border-color: var(--house-color, var(--accent)); background: var(--house-soft, var(--accent-soft)); color: var(--ink); }
-  .house-btn[data-house="gryffindor"] .crest { background: #8a1420; }
-  .house-btn[data-house="slytherin"] .crest { background: #1a5c38; }
-  .house-btn[data-house="ravenclaw"] .crest { background: #2451a4; }
-  .house-btn[data-house="hufflepuff"] .crest { background: #d9a627; }
+  .house-btn:hover { transform: translateY(-2px); }
+  .house-btn .crest {
+    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: var(--hc-soft); color: var(--hc-main); border: 1.5px solid color-mix(in srgb, var(--hc-main) 45%, transparent);
+  }
+  .house-btn .crest svg { width: 18px; height: 18px; }
+  .house-btn[data-house="gryffindor"] { --hc-main: #ae2323; --hc-soft: #f6dcdc; }
+  .house-btn[data-house="ravenclaw"] { --hc-main: #2454a4; --hc-soft: #dbe6f5; }
+  .house-btn[data-house="hufflepuff"] { --hc-main: #b8860b; --hc-soft: #f7ecc9; }
+  .house-btn[data-house="slytherin"] { --hc-main: #1f6f4a; --hc-soft: #dcefe3; }
+  .house-btn.picked {
+    border-color: var(--hc-main); background: var(--hc-soft); color: var(--ink);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--hc-main) 18%, transparent);
+  }
+  .house-btn.picked .crest { background: var(--hc-main); color: #fff; }
 
   .house-chip {
-    display: none; align-items: center; gap: 7px;
-    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; font-weight: 600;
-    padding: 5px 10px; border-radius: 999px; background: var(--house-soft, var(--surface-2)); color: var(--house-color, var(--ink-soft));
-    white-space: nowrap;
+    display: none; flex-direction: column; gap: 3px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; font-weight: 600;
+    padding: 6px 12px; border-radius: 14px; background: var(--house-soft, var(--surface-2)); color: var(--house-color, var(--ink-soft));
+    white-space: nowrap; border: 1px solid color-mix(in srgb, var(--house-color, var(--ink-faint)) 30%, transparent);
   }
-  .house-chip.show { display: inline-flex; }
-  .house-chip .crest-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--house-color, var(--accent)); }
+  .house-chip.show { display: flex; }
+  .house-chip .hc-top { display: flex; align-items: center; gap: 6px; }
+  .house-chip .hc-crest { width: 16px; height: 16px; display: flex; }
+  .house-chip .hc-crest svg { width: 100%; height: 100%; color: var(--house-color, var(--accent)); }
+  .house-chip .hc-rank { font-size: 0.62rem; font-weight: 500; opacity: 0.85; letter-spacing: 0.02em; }
+  .house-chip .hc-bar { width: 100%; height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--house-color, var(--accent)) 22%, transparent); overflow: hidden; }
+  .house-chip .hc-bar i { display: block; height: 100%; background: var(--house-color, var(--accent)); border-radius: 3px; transition: width 0.4s ease; }
 
   .edit-persona-row { display: flex; justify-content: flex-end; margin: -6px 0 14px; }
 
@@ -390,8 +412,66 @@
   .stability-row .sdot.ok { background: var(--good); }
   .stability-row .sdot.no { background: var(--bad); }
   .cat-bar-block { display: grid; gap: 5px; }
+
+  /* Ambient sparkle field, tinted by the active theme/house */
+  .sparkle-field {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+  }
+  .sparkle-field .spark {
+    position: absolute; border-radius: 50%; background: var(--accent);
+    opacity: 0.35; animation: spark-twinkle 4.5s ease-in-out infinite;
+  }
+  @keyframes spark-twinkle {
+    0%, 100% { opacity: 0.12; transform: scale(0.8); }
+    50% { opacity: 0.55; transform: scale(1.15); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sparkle-field .spark { animation: none; opacity: 0.22; }
+  }
+  .wrap { position: relative; z-index: 1; }
+
+  /* Micro feedback animations */
+  @keyframes opt-correct-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent); }
+    70% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--good) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 0%, transparent); }
+  }
+  @keyframes opt-wrong-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(3px); }
+    60% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+  }
+  .option.correct { animation: opt-correct-pulse 0.7s ease-out; }
+  .option.wrong { animation: opt-wrong-shake 0.35s ease-in-out; }
+  @media (prefers-reduced-motion: reduce) {
+    .option.correct, .option.wrong { animation: none; }
+  }
+
+  /* Quest (practice batch) framing */
+  .quest-dots-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .quest-dots-row .dots .dot { width: 9px; height: 9px; }
+  .quest-dots-row .dots .dot.done { background: var(--good); }
+  .quest-dots-row .label { font-size: 0.7rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .quest-complete { text-align: center; padding: 40px 30px; }
+  .quest-complete .qc-icon {
+    width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center;
+  }
+  .quest-complete .qc-icon svg { width: 32px; height: 32px; }
+  .quest-complete h2 { font-size: 1.5rem; margin-bottom: 8px; }
+  .quest-complete p.sub { color: var(--ink-soft); margin-bottom: 22px; }
+  .quest-complete .qc-stats { display: flex; justify-content: center; gap: 28px; margin-bottom: 26px; }
+  .quest-complete .qc-stats div { text-align: center; }
+  .quest-complete .qc-stats .num { font-family: "IBM Plex Mono", monospace; font-size: 1.4rem; font-weight: 600; color: var(--ink); }
+  .quest-complete .qc-stats .lbl { font-size: 0.7rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+  .quest-complete .qc-badges { margin-bottom: 22px; }
+  .quest-complete .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 </style>
 
+<div class="sparkle-field" id="sparkleField" aria-hidden="true"></div>
 <div class="wrap">
   <header class="top">
     <div class="brand">
@@ -406,7 +486,14 @@
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
-      <span class="house-chip" id="houseChip"><span class="crest-dot"></span><span id="houseChipText"></span></span>
+      <span class="house-chip" id="houseChip">
+        <span class="hc-top">
+          <span class="hc-crest" id="houseChipCrest"></span>
+          <span id="houseChipText"></span>
+        </span>
+        <span class="hc-rank" id="houseChipRank"></span>
+        <span class="hc-bar"><i id="houseChipBar" style="width:0%"></i></span>
+      </span>
       <div class="ring-wrap" id="ringWrap" title="Framsteg">
         <svg width="46" height="46" viewBox="0 0 46 46">
           <circle class="ring-track" cx="23" cy="23" r="19"></circle>
@@ -453,10 +540,16 @@
     <!-- DIAGNOSTIC / PRACTICE (shared question view) -->
     <section id="screen-quiz" class="card" hidden>
       <div id="practiceTopbar" class="practice-topbar" hidden>
-        <div class="mini-stats">
-          <span>Rätt just nu <b id="statStreak">0</b></span>
-          <span>Bästa <b id="statBest">0</b></span>
-          <span>Övade totalt <b id="statTotal">0</b></span>
+        <div>
+          <div class="quest-dots-row">
+            <span class="label">Uppdrag</span>
+            <div class="dots" id="questDots"></div>
+          </div>
+          <div class="mini-stats">
+            <span>Rätt just nu <b id="statStreak">0</b></span>
+            <span>Bästa <b id="statBest">0</b></span>
+            <span>Övade totalt <b id="statTotal">0</b></span>
+          </div>
         </div>
         <button class="link-btn" id="btnToggleDash">Visa min profil</button>
       </div>
@@ -532,6 +625,27 @@
 
       <button class="btn" id="btnStartAdaptive">Starta anpassad övning →</button>
     </section>
+
+    <!-- QUEST COMPLETE (interstitial between practice batches) -->
+    <section id="screen-quest-complete" class="card quest-complete" hidden>
+      <div class="qc-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3l2.4 5.1 5.6.6-4.2 3.8 1.2 5.5L12 15.8 6.9 18l1.3-5.5-4.2-3.8 5.6-.6L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Uppdrag klart!</h2>
+      <p class="sub" id="qcSub"></p>
+      <div class="qc-stats">
+        <div><div class="num mono" id="qcCorrect">0</div><div class="lbl">Rätt svar</div></div>
+        <div><div class="num mono" id="qcPoints">0</div><div class="lbl">Poäng intjänade</div></div>
+        <div><div class="num mono" id="qcStreak">0</div><div class="lbl">Bästa svit</div></div>
+      </div>
+      <div class="badge-row qc-badges" id="qcBadges"></div>
+      <div class="btn-row">
+        <button class="btn" id="btnNextQuest">Nästa uppdrag →</button>
+        <button class="btn ghost" id="btnQuestToProfile">Visa min profil</button>
+      </div>
+    </section>
   </main>
 
   <footer class="page">
@@ -560,11 +674,80 @@ const CATEGORIES = {
 const QUESTIONS = JSON.parse(document.getElementById("qdata").textContent);
 
 const HOUSES = {
-  gryffindor: { name: "Gryffindor", color: "#8a1420", soft: "#f8e2e4" },
-  ravenclaw: { name: "Ravenclaw", color: "#2451a4", soft: "#dee8f8" },
-  hufflepuff: { name: "Hufflepuff", color: "#8a6d0b", soft: "#f7edd0" },
-  slytherin: { name: "Slytherin", color: "#1a5c38", soft: "#dcefe3" }
+  gryffindor: {
+    name: "Gryffindor", animal: "Lejon",
+    accent: "#ae2323", accentSoft: "#f6dcdc", accentInk: "#ffffff",
+    metal: "#c9a227", metalSoft: "#f7edc9",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9L19 19M5 19l2.1-2.1M16.9 7.1L19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`
+  },
+  ravenclaw: {
+    name: "Ravenclaw", animal: "Örn",
+    accent: "#2454a4", accentSoft: "#dbe6f5", accentInk: "#ffffff",
+    metal: "#8a6a35", metalSoft: "#efe4cf",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M2 15L12 6l10 9M2 15l10-4.5L22 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  },
+  hufflepuff: {
+    name: "Hufflepuff", animal: "Grävling",
+    accent: "#b8860b", accentSoft: "#f7ecc9", accentInk: "#ffffff",
+    metal: "#4a3a1a", metalSoft: "#e9e2d3",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M12 3c4 0 7.5 2.7 7.5 7v2c0 4.3-3.5 7.7-7.5 9-4-1.3-7.5-4.7-7.5-9v-2c0-4.3 3.5-7 7.5-7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 4v17" stroke="currentColor" stroke-width="1.6"/></svg>`
+  },
+  slytherin: {
+    name: "Slytherin", animal: "Orm",
+    accent: "#1f6f4a", accentSoft: "#dcefe3", accentInk: "#ffffff",
+    metal: "#5f6b65", metalSoft: "#e4e7e5",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M3 7c2.5 0 2.5 3 5 3s2.5-3 5-3 2.5 3 5 3 2.5-1 2.5-1M3 13c2.5 0 2.5 3 5 3s2.5-3 5-3 2.5 3 5 3 2.5-1 2.5-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`
+  }
 };
+
+const RANKS = [
+  { min: 0, title: "Novis" },
+  { min: 10, title: "Lärling" },
+  { min: 25, title: "Adept" },
+  { min: 50, title: "Duktig trollkarl" },
+  { min: 100, title: "Expert" },
+  { min: 200, title: "Mästare" },
+  { min: 400, title: "Stormästare" }
+];
+
+function rankInfo(points) {
+  let current = RANKS[0];
+  let next = null;
+  for (let i = 0; i < RANKS.length; i++) {
+    if (points >= RANKS[i].min) current = RANKS[i];
+    else { next = RANKS[i]; break; }
+  }
+  const span = next ? next.min - current.min : 1;
+  const into = next ? points - current.min : span;
+  const pct = next ? Math.min(100, Math.round((into / span) * 100)) : 100;
+  return { title: current.title, next, pct };
+}
+
+function applyHouseTheme(key) {
+  const root = document.documentElement.style;
+  const h = HOUSES[key];
+  if (!h) {
+    root.removeProperty("--accent");
+    root.removeProperty("--accent-soft");
+    root.removeProperty("--accent-ink");
+    root.removeProperty("--gold");
+    root.removeProperty("--gold-soft");
+    return;
+  }
+  root.setProperty("--accent", h.accent);
+  root.setProperty("--accent-soft", h.accentSoft);
+  root.setProperty("--accent-ink", h.accentInk);
+  root.setProperty("--gold", h.metal);
+  root.setProperty("--gold-soft", h.metalSoft);
+}
+
+function injectHouseIcons() {
+  document.querySelectorAll(".house-btn").forEach(btn => {
+    const h = HOUSES[btn.dataset.house];
+    const crest = btn.querySelector(".crest");
+    if (h && crest) crest.innerHTML = h.icon;
+  });
+}
 
 /* Egenskrivna repliker i respektive karaktärs anda, inte citat ur böckerna eller filmerna. */
 const CHARACTERS = [
@@ -627,8 +810,29 @@ function defaultState() {
     totalCorrect: 0,
     streak: 0,
     bestStreak: 0,
-    recentIds: []
+    recentIds: [],
+    questSize: 5,
+    questIndex: 0,
+    questCorrect: 0,
+    questPoints: 0
   };
+}
+
+function initSparkles() {
+  const field = byId("sparkleField");
+  const n = 16;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement("span");
+    s.className = "spark";
+    const size = 2 + Math.random() * 4;
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.left = Math.random() * 100 + "%";
+    s.style.top = Math.random() * 100 + "%";
+    s.style.animationDelay = (Math.random() * 4.5).toFixed(2) + "s";
+    s.style.animationDuration = (3.5 + Math.random() * 3).toFixed(2) + "s";
+    field.appendChild(s);
+  }
 }
 
 function saveState() {
@@ -716,9 +920,15 @@ function renderHouseChip() {
   const chip = byId("houseChip");
   if (!state.house || !HOUSES[state.house]) { chip.classList.remove("show"); return; }
   const h = HOUSES[state.house];
-  chip.style.setProperty("--house-color", h.color);
-  chip.style.setProperty("--house-soft", h.soft);
+  chip.style.setProperty("--house-color", h.accent);
+  chip.style.setProperty("--house-soft", h.accentSoft);
+  byId("houseChipCrest").innerHTML = h.icon;
   byId("houseChipText").textContent = `${h.name} · ${state.housePoints} p`;
+  const rank = rankInfo(state.housePoints);
+  byId("houseChipRank").textContent = rank.next
+    ? `${rank.title} (${rank.next.min - state.housePoints} p till ${rank.next.title})`
+    : `${rank.title}, högsta grad`;
+  byId("houseChipBar").style.width = rank.pct + "%";
   chip.classList.add("show");
 }
 
@@ -727,15 +937,9 @@ function wireHousePicker(gridId) {
   grid.querySelectorAll(".house-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       state.house = btn.dataset.house;
-      const h = HOUSES[state.house];
-      grid.querySelectorAll(".house-btn").forEach(b => {
-        b.classList.remove("picked");
-        b.style.removeProperty("--house-color");
-        b.style.removeProperty("--house-soft");
-      });
+      grid.querySelectorAll(".house-btn").forEach(b => b.classList.remove("picked"));
       btn.classList.add("picked");
-      btn.style.setProperty("--house-color", h.color);
-      btn.style.setProperty("--house-soft", h.soft);
+      applyHouseTheme(state.house);
       saveState();
       renderHouseChip();
     });
@@ -745,13 +949,7 @@ function wireHousePicker(gridId) {
 function syncHousePickerUI(gridId) {
   const grid = byId(gridId);
   grid.querySelectorAll(".house-btn").forEach(b => {
-    const isPicked = state.house === b.dataset.house;
-    b.classList.toggle("picked", isPicked);
-    if (isPicked) {
-      const h = HOUSES[b.dataset.house];
-      b.style.setProperty("--house-color", h.color);
-      b.style.setProperty("--house-soft", h.soft);
-    }
+    b.classList.toggle("picked", state.house === b.dataset.house);
   });
 }
 
@@ -856,12 +1054,23 @@ function showQuestion(q, opts) {
   byId("charQuip").hidden = true;
   byId("pointsToast").textContent = "";
   byId("btnNext").hidden = true;
+  byId("btnNext").textContent = "Nästa fråga →";
 
   byId("diagProgress").hidden = !isDiag;
   byId("practiceTopbar").hidden = !!isDiag;
   if (isDiag) renderDiagDots();
-  if (!isDiag) renderMiniStats();
+  if (!isDiag) { renderMiniStats(); renderQuestDots(); }
   renderRing();
+}
+
+function renderQuestDots() {
+  const wrap = byId("questDots");
+  wrap.innerHTML = "";
+  for (let i = 0; i < state.questSize; i++) {
+    const d = document.createElement("span");
+    d.className = "dot" + (i < state.questIndex ? " done" : i === state.questIndex ? " now" : "");
+    wrap.appendChild(d);
+  }
 }
 
 function renderDiagDots() {
@@ -941,12 +1150,20 @@ function handleAnswer(choiceIndex) {
 
   if (state.phase === "diagnostic") {
     state.diagnosticResults.push({ id: q.id, category: q.category, correct });
+  } else if (state.phase === "practice") {
+    state.questIndex++;
+    if (correct) state.questCorrect++;
+    state.questPoints += pts;
+    if (state.questIndex >= state.questSize) {
+      byId("btnNext").textContent = "Se uppdragsresultat →";
+    }
   }
 
   saveState();
   renderRing();
   renderHouseChip();
   if (state.phase !== "diagnostic") renderMiniStats();
+  if (state.phase === "practice") renderQuestDots();
 }
 
 /* ============ FLOW CONTROL ============ */
@@ -1059,13 +1276,57 @@ function goPractice() {
   state.phase = "practice";
   byId("screen-results").hidden = true;
   byId("screen-intro").hidden = true;
+  byId("screen-quest-complete").hidden = true;
   byId("screen-quiz").hidden = false;
   saveState();
   renderHouseChip();
-  showQuestion(pickAdaptiveQuestion(), { diagnostic: false });
+  if (state.questIndex >= state.questSize) {
+    showQuestComplete();
+  } else {
+    showQuestion(pickAdaptiveQuestion(), { diagnostic: false });
+  }
+}
+
+function resetQuestCounters() {
+  state.questIndex = 0;
+  state.questCorrect = 0;
+  state.questPoints = 0;
+}
+
+function beginNewQuest() {
+  resetQuestCounters();
+  goPractice();
 }
 
 function nextPractice() {
+  if (state.questIndex >= state.questSize) {
+    showQuestComplete();
+  } else {
+    showQuestion(pickAdaptiveQuestion(), { diagnostic: false });
+  }
+}
+
+function showQuestComplete() {
+  byId("screen-quiz").hidden = true;
+  byId("screen-quest-complete").hidden = false;
+  byId("qcCorrect").textContent = state.questCorrect + " / " + state.questSize;
+  byId("qcPoints").textContent = state.questPoints;
+  byId("qcStreak").textContent = state.bestStreak;
+  byId("qcSub").textContent =
+    state.questCorrect === state.questSize ? "Perfekt uppdrag, alla rätt." :
+    state.questCorrect >= state.questSize - 1 ? "Riktigt stark runda." :
+    state.questCorrect <= 1 ? "Klurigt uppdrag, men du är ett steg vassare nu." :
+    "Bra jobbat, fler uppdrag väntar.";
+  renderBadges(byId("qcBadges"));
+  saveState();
+}
+
+function startNextQuest() {
+  resetQuestCounters();
+  byId("screen-quest-complete").hidden = true;
+  byId("screen-quiz").hidden = false;
+  saveState();
+  renderQuestDots();
   showQuestion(pickAdaptiveQuestion(), { diagnostic: false });
 }
 
@@ -1092,9 +1353,14 @@ function togglePersonaEditor() {
 
 /* ============ EVENTS ============ */
 byId("btnStart").addEventListener("click", startDiagnostic);
-byId("btnStartAdaptive").addEventListener("click", goPractice);
+byId("btnStartAdaptive").addEventListener("click", beginNewQuest);
 byId("btnToggleDash").addEventListener("click", toggleDash);
 byId("btnEditPersona").addEventListener("click", togglePersonaEditor);
+byId("btnNextQuest").addEventListener("click", startNextQuest);
+byId("btnQuestToProfile").addEventListener("click", () => {
+  startNextQuest();
+  toggleDash();
+});
 byId("btnNext").addEventListener("click", () => {
   if (state.phase === "diagnostic") nextDiagnostic();
   else nextPractice();
@@ -1103,6 +1369,7 @@ byId("btnReset").addEventListener("click", () => {
   if (confirm("Vill du radera dina sparade framsteg i den här webbläsaren?")) {
     localStorage.removeItem(STORAGE_KEY);
     state = loadState();
+    applyHouseTheme(null);
     goIntro();
   }
 });
@@ -1115,11 +1382,14 @@ byId("nameInput2").addEventListener("change", () => {
   saveState();
   renderHouseChip();
 });
+injectHouseIcons();
 wireHousePicker("houseGrid");
 wireHousePicker("houseGrid2");
+initSparkles();
 
 /* ============ INIT ============ */
 (function init() {
+  applyHouseTheme(state.house);
   if (state.phase === "diagnostic" && state.diagnosticQueue.length) {
     byId("screen-intro").hidden = true;
     byId("screen-quiz").hidden = false;
