@@ -939,7 +939,7 @@
         <button class="quest-option" data-quest="boss">
           <span class="qo-icon" data-icon="shield-griffin"></span>
           <span class="qo-title">Boss-uppdrag</span>
-          <span class="qo-desc">Svårare frågor, men dubbla poäng.</span>
+          <span class="qo-desc">Riktiga riksfinalfrågor, riktigt svårt, men dubbla poäng.</span>
         </button>
         <button class="quest-option" data-quest="speed">
           <span class="qo-icon bolt"></span>
@@ -1572,10 +1572,17 @@ function weakestCategories() {
 }
 
 /* ============ DIAGNOSTIC SELECTION ============ */
+/* Riksfinal-frågor är svårast och sparas uteslutande till Boss-uppdrag.
+   Kval- och distriktsfrågor utgör den vanliga poolen för diagnostik och övrig övning. */
+const NON_BOSS_QUESTIONS = QUESTIONS.filter(q => q.round !== "riks");
+const BOSS_QUESTIONS = QUESTIONS.filter(q => q.round === "riks");
+const KVAL_QUESTIONS = QUESTIONS.filter(q => q.round === "kval");
+
 function buildDiagnosticQueue(target = 12, perCategory = 2) {
+  const source = KVAL_QUESTIONS.length >= target ? KVAL_QUESTIONS : NON_BOSS_QUESTIONS;
   const byCat = {};
   Object.keys(CATEGORIES).forEach(c => byCat[c] = []);
-  QUESTIONS.forEach(q => { if (byCat[q.category]) byCat[q.category].push(q.id); });
+  source.forEach(q => { if (byCat[q.category]) byCat[q.category].push(q.id); });
 
   let picked = [];
   Object.keys(byCat).forEach(cat => {
@@ -1583,7 +1590,7 @@ function buildDiagnosticQueue(target = 12, perCategory = 2) {
   });
 
   if (picked.length < target) {
-    const remaining = shuffle(QUESTIONS.map(q => q.id).filter(id => !picked.includes(id)));
+    const remaining = shuffle(source.map(q => q.id).filter(id => !picked.includes(id)));
     for (const id of remaining) {
       if (picked.length >= target) break;
       picked.push(id);
@@ -1608,7 +1615,7 @@ function pickAdaptiveCore() {
   });
 
   const catsWithQuestions = Object.keys(weights).filter(
-    cat => QUESTIONS.some(q => q.category === cat)
+    cat => NON_BOSS_QUESTIONS.some(q => q.category === cat)
   );
   const totalWeight = catsWithQuestions.reduce((s, c) => s + weights[c], 0);
   let r = Math.random() * totalWeight;
@@ -1618,14 +1625,14 @@ function pickAdaptiveCore() {
     if (r <= 0) { chosenCat = cat; break; }
   }
 
-  const pool = QUESTIONS.filter(q => q.category === chosenCat);
+  const pool = NON_BOSS_QUESTIONS.filter(q => q.category === chosenCat);
   return pickFromPool(pool);
 }
 
 function pickQuestQuestion() {
   const type = state.questType || "adaptive";
   if (type === "subject" && state.questCategory) {
-    const pool = QUESTIONS.filter(q => q.category === state.questCategory);
+    const pool = NON_BOSS_QUESTIONS.filter(q => q.category === state.questCategory);
     return pool.length ? pickFromPool(pool) : pickAdaptiveCore();
   }
   if (type === "repeat") {
@@ -1633,8 +1640,7 @@ function pickQuestQuestion() {
     return pool.length ? pickFromPool(pool) : pickAdaptiveCore();
   }
   if (type === "boss") {
-    const pool = QUESTIONS.filter(q => q.difficulty >= 4);
-    return pickFromPool(pool.length ? pool : QUESTIONS);
+    return pickFromPool(BOSS_QUESTIONS.length ? BOSS_QUESTIONS : QUESTIONS.filter(q => q.difficulty >= 4));
   }
   return pickAdaptiveCore();
 }
