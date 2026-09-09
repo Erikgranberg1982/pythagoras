@@ -693,6 +693,58 @@
     .quest-option-grid { grid-template-columns: 1fr; }
     .mg-problem { font-size: 2rem; }
   }
+
+  /* Scorecard: a trading-card style player summary */
+  .scorecard { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 32px 24px; }
+  .sc-card {
+    width: 100%; max-width: 300px; border-radius: 20px; overflow: hidden;
+    background: var(--surface);
+    border: 3px solid var(--house-color, var(--accent));
+    box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--house-color, var(--accent)) 55%, transparent);
+  }
+  .sc-photo { width: 100%; aspect-ratio: 4 / 5; background: var(--surface-2); position: relative; }
+  .sc-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .sc-namebar {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    padding: 12px 16px 4px; background: linear-gradient(135deg, var(--house-color, var(--accent)), color-mix(in srgb, var(--house-color, var(--accent)) 70%, black));
+  }
+  .sc-name { font-family: "Fraunces", serif; font-weight: 700; font-size: 1.15rem; color: #fff; }
+  .sc-house { font-family: "IBM Plex Mono", monospace; font-size: 0.7rem; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.05em; }
+  .sc-rank {
+    text-align: center; font-family: "IBM Plex Mono", monospace; font-size: 0.76rem; font-weight: 700;
+    color: #fff; background: color-mix(in srgb, var(--house-color, var(--accent)) 70%, black);
+    padding: 0 0 10px;
+  }
+  .sc-stats { padding: 16px; display: grid; gap: 10px; }
+  .sc-stat-row { display: grid; grid-template-columns: 92px 1fr 34px; align-items: center; gap: 8px; }
+  .sc-stat-name { font-size: 0.78rem; color: var(--ink); font-weight: 600; }
+  .sc-stat-track { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .sc-stat-fill { height: 100%; border-radius: 999px; background: var(--house-color, var(--accent)); }
+  .sc-stat-pts { font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; text-align: right; color: var(--ink-soft); }
+  .sc-callout {
+    margin: 0 16px 16px; padding: 10px 12px; border-radius: var(--radius-s);
+    background: var(--gold-soft); color: var(--gold); font-size: 0.8rem; font-weight: 600; text-align: center;
+  }
+
+  /* Leaderboard */
+  .lb-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .lb-tab {
+    flex: 1; appearance: none; cursor: pointer; padding: 10px; border-radius: var(--radius-s);
+    border: 1.5px solid var(--line); background: var(--surface); font-weight: 600; font-size: 0.86rem; color: var(--ink-soft);
+  }
+  .lb-tab.picked { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .lb-list { display: grid; gap: 8px; margin-bottom: 18px; min-height: 60px; }
+  .lb-row {
+    display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: var(--radius-s); background: var(--surface-2);
+  }
+  .lb-row.me { border: 1.5px solid var(--accent); background: var(--accent-soft); }
+  .lb-rank { font-family: "IBM Plex Mono", monospace; font-weight: 700; color: var(--ink-faint); text-align: center; }
+  .lb-name-wrap { display: flex; flex-direction: column; min-width: 0; }
+  .lb-name { font-weight: 600; font-size: 0.9rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lb-house { font-size: 0.7rem; color: var(--ink-faint); }
+  .lb-points { font-family: "IBM Plex Mono", monospace; font-weight: 700; color: var(--ink); }
+  .lb-empty { color: var(--ink-faint); font-size: 0.86rem; text-align: center; padding: 18px 0; }
 </style>
 
 <div class="sparkle-field" id="sparkleField" aria-hidden="true"></div>
@@ -801,26 +853,8 @@
         <div class="cat-bars" id="dashBars"></div>
         <div class="edit-persona-row">
           <button class="link-btn" id="btnDashChangeQuest">Byt uppdragstyp</button>
-          <button class="link-btn" id="btnEditPersona">Byt namn eller hus</button>
-        </div>
-        <div class="onboard" id="personaEditor" hidden>
-          <div>
-            <label for="nameInput2">Ditt trollkarlsnamn</label>
-            <input class="name-input" id="nameInput2" type="text" maxlength="24" placeholder="t.ex. Alrik Stjärnfall" />
-          </div>
-          <div>
-            <label>Välj elevhus</label>
-            <div class="house-grid" id="houseGrid2">
-              <button type="button" class="house-btn" data-house="gryffindor"><span class="crest">​</span>Gryffindor</button>
-              <button type="button" class="house-btn" data-house="ravenclaw"><span class="crest">​</span>Ravenclaw</button>
-              <button type="button" class="house-btn" data-house="hufflepuff"><span class="crest">​</span>Hufflepuff</button>
-              <button type="button" class="house-btn" data-house="slytherin"><span class="crest">​</span>Slytherin</button>
-            </div>
-          </div>
-          <div>
-            <label>Välj din karaktär</label>
-            <div class="avatar-grid" id="avatarGrid2"></div>
-          </div>
+          <button class="link-btn" id="btnShowScorecard">Visa mitt kort</button>
+          <button class="link-btn" id="btnShowLeaderboard">Visa topplista</button>
         </div>
         <div class="sync-box">
           <div class="sync-code-card" id="syncCodeCard" hidden>
@@ -924,12 +958,12 @@
         <button class="quest-option" data-quest="adaptive">
           <span class="qo-icon" data-icon="compass"></span>
           <span class="qo-title">Fritt uppdrag</span>
-          <span class="qo-desc">Blandade frågor, mest på det du behöver träna på.</span>
+          <span class="qo-desc">Kvaltävlingsnivå. Blandade frågor, mest på det du behöver träna på.</span>
         </button>
         <button class="quest-option" data-quest="subject">
           <span class="qo-icon" data-icon="spellbook"></span>
           <span class="qo-title">Ämnesuppdrag</span>
-          <span class="qo-desc">Välj själv ett ämne att öva extra på.</span>
+          <span class="qo-desc">Kvaltävlingsnivå. Välj själv ett ämne att öva extra på.</span>
         </button>
         <button class="quest-option" data-quest="repeat" id="questOptionRepeat">
           <span class="qo-icon" data-icon="hourglass"></span>
@@ -939,12 +973,12 @@
         <button class="quest-option" data-quest="boss">
           <span class="qo-icon" data-icon="shield-griffin"></span>
           <span class="qo-title">Boss-uppdrag</span>
-          <span class="qo-desc">Riktiga riksfinalfrågor, riktigt svårt, men dubbla poäng.</span>
+          <span class="qo-desc">Riksfinalnivå, det svåraste som finns. Ger dubbla poäng.</span>
         </button>
         <button class="quest-option" data-quest="speed">
           <span class="qo-icon bolt"></span>
           <span class="qo-title">Snabbtest</span>
-          <span class="qo-desc">Samma frågor, men klockan tickar.</span>
+          <span class="qo-desc">Distriktsfinalnivå, ett snäpp svårare. Klockan tickar också.</span>
         </button>
       </div>
       <div class="subject-picker" id="subjectPicker" hidden>
@@ -990,6 +1024,39 @@
           <button class="btn btn-cta" id="btnMinigameAgain">Spela igen →</button>
           <button class="btn ghost" id="btnMinigameDone">Tillbaka till uppdrag</button>
         </div>
+      </div>
+    </section>
+
+    <!-- SCORECARD -->
+    <section id="screen-scorecard" class="card scorecard" hidden>
+      <div class="sc-card" id="scCard">
+        <div class="sc-photo"><img id="scAvatarImg" src="" alt="" /></div>
+        <div class="sc-namebar">
+          <span class="sc-name" id="scName">Namn</span>
+          <span class="sc-house" id="scHouse">Hus</span>
+        </div>
+        <div class="sc-rank" id="scRank">Rang</div>
+        <div class="sc-stats" id="scStats"></div>
+        <div class="sc-callout" id="scCallout"></div>
+      </div>
+      <button class="btn ghost" id="btnScorecardBack">Tillbaka</button>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="screen-leaderboard" class="card" hidden>
+      <div class="results-head">
+        <h2>Topplista</h2>
+        <p id="lbStatus">Laddar…</p>
+      </div>
+      <div class="lb-tabs">
+        <button class="lb-tab picked" data-tab="players" id="lbTabPlayers">Alla spelare</button>
+        <button class="lb-tab" data-tab="houses" id="lbTabHouses">Elevhem</button>
+      </div>
+      <div class="lb-list" id="lbPlayers"></div>
+      <div class="lb-list" id="lbHouses" hidden></div>
+      <div class="btn-row">
+        <button class="btn ghost" id="btnLbRefresh">Uppdatera</button>
+        <button class="btn ghost" id="btnLbBack">Tillbaka</button>
       </div>
     </section>
   </main>
@@ -1121,7 +1188,7 @@ function avatarSrc(id) {
 }
 
 function injectAvatarPickers() {
-  [byId("avatarGrid"), byId("avatarGrid2")].forEach(grid => {
+  [byId("avatarGrid")].forEach(grid => {
     if (!grid || grid.childElementCount) return;
     for (let i = 1; i <= AVATAR_COUNT; i++) {
       const btn = document.createElement("button");
@@ -1236,6 +1303,7 @@ function defaultState() {
     diagnosticResults: [],
     categoryStats: {},
     categoryHistory: {},
+    categoryPoints: {},
     totalAnswered: 0,
     totalCorrect: 0,
     streak: 0,
@@ -1514,11 +1582,19 @@ function checkBadges() {
   return earned;
 }
 
-function awardPoints(correct) {
+function pointsForDifficulty(difficulty) {
+  return Math.max(1, Math.ceil((difficulty || 1) / 2));
+}
+
+function awardPoints(correct, question) {
   if (!correct) return 0;
-  let pts = state.questType === "boss" ? 2 : 1;
+  let pts = pointsForDifficulty(question && question.difficulty);
+  if (state.questType === "boss") pts *= 2;
   if ([5, 10, 15, 20, 25, 30].includes(state.streak)) pts += 4;
   state.housePoints += pts;
+  if (question) {
+    state.categoryPoints[question.category] = (state.categoryPoints[question.category] || 0) + pts;
+  }
   return pts;
 }
 
@@ -1577,6 +1653,7 @@ function weakestCategories() {
 const NON_BOSS_QUESTIONS = QUESTIONS.filter(q => q.round !== "riks");
 const BOSS_QUESTIONS = QUESTIONS.filter(q => q.round === "riks");
 const KVAL_QUESTIONS = QUESTIONS.filter(q => q.round === "kval");
+const DISTRIKT_QUESTIONS = QUESTIONS.filter(q => q.round === "distrikt");
 
 function buildDiagnosticQueue(target = 12, perCategory = 2) {
   const source = KVAL_QUESTIONS.length >= target ? KVAL_QUESTIONS : NON_BOSS_QUESTIONS;
@@ -1607,7 +1684,7 @@ function pickFromPool(pool) {
   return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
-function pickAdaptiveCore() {
+function pickWeighted(pool) {
   const weights = {};
   Object.keys(CATEGORIES).forEach(cat => {
     const acc = categoryAccuracy(cat);
@@ -1615,8 +1692,9 @@ function pickAdaptiveCore() {
   });
 
   const catsWithQuestions = Object.keys(weights).filter(
-    cat => NON_BOSS_QUESTIONS.some(q => q.category === cat)
+    cat => pool.some(q => q.category === cat)
   );
+  if (!catsWithQuestions.length) return pickFromPool(pool);
   const totalWeight = catsWithQuestions.reduce((s, c) => s + weights[c], 0);
   let r = Math.random() * totalWeight;
   let chosenCat = catsWithQuestions[0];
@@ -1625,14 +1703,19 @@ function pickAdaptiveCore() {
     if (r <= 0) { chosenCat = cat; break; }
   }
 
-  const pool = NON_BOSS_QUESTIONS.filter(q => q.category === chosenCat);
-  return pickFromPool(pool);
+  return pickFromPool(pool.filter(q => q.category === chosenCat));
+}
+
+/* Svårighetstrappan: Fritt/Ämne = kvalnivå, Snabbtest = distriktsnivå,
+   Boss = riksnivå. Repetition är obunden, det är frågor du redan mött. */
+function pickAdaptiveCore() {
+  return pickWeighted(KVAL_QUESTIONS.length ? KVAL_QUESTIONS : NON_BOSS_QUESTIONS);
 }
 
 function pickQuestQuestion() {
   const type = state.questType || "adaptive";
   if (type === "subject" && state.questCategory) {
-    const pool = NON_BOSS_QUESTIONS.filter(q => q.category === state.questCategory);
+    const pool = KVAL_QUESTIONS.filter(q => q.category === state.questCategory);
     return pool.length ? pickFromPool(pool) : pickAdaptiveCore();
   }
   if (type === "repeat") {
@@ -1641,6 +1724,9 @@ function pickQuestQuestion() {
   }
   if (type === "boss") {
     return pickFromPool(BOSS_QUESTIONS.length ? BOSS_QUESTIONS : QUESTIONS.filter(q => q.difficulty >= 4));
+  }
+  if (type === "speed") {
+    return DISTRIKT_QUESTIONS.length ? pickWeighted(DISTRIKT_QUESTIONS) : pickAdaptiveCore();
   }
   return pickAdaptiveCore();
 }
@@ -1810,7 +1896,7 @@ function handleAnswer(choiceIndex) {
   if (state.recentIds.length > 8) state.recentIds.shift();
 
   const rankBefore = rankInfo(state.housePoints).title;
-  const pts = awardPoints(correct);
+  const pts = awardPoints(correct, q);
   const rankAfter = rankInfo(state.housePoints).title;
   const rankedUp = pts > 0 && rankAfter !== rankBefore;
   const newBadges = checkBadges();
@@ -1974,6 +2060,173 @@ function renderBadges(container) {
   });
 }
 
+/* ============ SCOREKORT ============ */
+function goScorecard() {
+  if (dashVisible) toggleDash();
+  byId("screen-intro").hidden = true;
+  byId("screen-results").hidden = true;
+  byId("screen-quiz").hidden = true;
+  byId("screen-quest-complete").hidden = true;
+  byId("screen-quest-picker").hidden = true;
+  byId("screen-minigame").hidden = true;
+  byId("screen-leaderboard").hidden = true;
+  byId("screen-scorecard").hidden = false;
+  renderScorecard();
+}
+
+function renderScorecard() {
+  const card = byId("scCard");
+  const h = HOUSES[state.house];
+  if (h) {
+    card.style.setProperty("--house-color", h.accent);
+  }
+  byId("scAvatarImg").src = state.avatarId ? avatarSrc(state.avatarId) : "assets/icons/wand.png";
+  byId("scName").textContent = state.playerName || "Utmanare";
+  byId("scHouse").textContent = h ? h.name : "Inget hus valt";
+  const rank = rankInfo(state.housePoints);
+  byId("scRank").textContent = `${rank.title} · ${state.housePoints} p`;
+
+  const rows = Object.keys(CATEGORIES).map(cat => ({
+    cat,
+    pts: state.categoryPoints[cat] || 0,
+    acc: categoryAccuracy(cat)
+  }));
+  const maxPts = Math.max(1, ...rows.map(r => r.pts));
+  rows.sort((a, b) => b.pts - a.pts);
+
+  const statsWrap = byId("scStats");
+  statsWrap.innerHTML = "";
+  rows.forEach(r => {
+    const row = document.createElement("div");
+    row.className = "sc-stat-row";
+    const pct = Math.round((r.pts / maxPts) * 100);
+    row.innerHTML = `
+      <div class="sc-stat-name">${CATEGORIES[r.cat]}</div>
+      <div class="sc-stat-track"><div class="sc-stat-fill" style="width:${r.pts ? pct : 0}%"></div></div>
+      <div class="sc-stat-pts mono">${r.pts}</div>
+    `;
+    statsWrap.appendChild(row);
+  });
+
+  const withPts = rows.filter(r => r.pts > 0);
+  const callout = byId("scCallout");
+  if (withPts.length >= 2) {
+    const best = withPts[0];
+    const worst = withPts[withPts.length - 1];
+    callout.textContent = `Bäst på ${CATEGORIES[best.cat]}, mest att vinna i ${CATEGORIES[worst.cat]}.`;
+  } else if (withPts.length === 1) {
+    callout.textContent = `Bäst på ${CATEGORIES[withPts[0].cat]} hittills.`;
+  } else {
+    callout.textContent = "Öva några uppdrag för att fylla i ditt kort.";
+  }
+}
+
+/* ============ TOPPLISTA ============ */
+let lbActiveTab = "players";
+
+function goLeaderboard() {
+  if (dashVisible) toggleDash();
+  byId("screen-intro").hidden = true;
+  byId("screen-results").hidden = true;
+  byId("screen-quiz").hidden = true;
+  byId("screen-quest-complete").hidden = true;
+  byId("screen-quest-picker").hidden = true;
+  byId("screen-minigame").hidden = true;
+  byId("screen-scorecard").hidden = true;
+  byId("screen-leaderboard").hidden = false;
+  loadLeaderboard();
+}
+
+function switchLeaderboardTab(tab) {
+  lbActiveTab = tab;
+  byId("lbTabPlayers").classList.toggle("picked", tab === "players");
+  byId("lbTabHouses").classList.toggle("picked", tab === "houses");
+  byId("lbPlayers").hidden = tab !== "players";
+  byId("lbHouses").hidden = tab !== "houses";
+}
+
+function loadLeaderboard() {
+  const status = byId("lbStatus");
+  if (!firebaseConfigured()) {
+    status.textContent = "Topplistan kräver molnsynk, som inte är i gång just nu.";
+    byId("lbPlayers").innerHTML = "";
+    byId("lbHouses").innerHTML = "";
+    return;
+  }
+  status.textContent = "Laddar…";
+  db.collection("saves").get().then(snap => {
+    const players = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      if (d && d.playerName) {
+        players.push({ name: d.playerName, house: d.house, points: d.housePoints || 0, code: doc.id });
+      }
+    });
+    players.sort((a, b) => b.points - a.points);
+    renderPlayerLeaderboard(players);
+    renderHouseLeaderboard(players);
+    status.textContent = players.length
+      ? `${players.length} spelare har övat hittills.`
+      : "Ingen har sparat några framsteg i molnet än.";
+  }).catch(() => {
+    status.textContent = "Kunde inte hämta topplistan just nu. Kolla internetuppkopplingen.";
+  });
+}
+
+function renderPlayerLeaderboard(players) {
+  const wrap = byId("lbPlayers");
+  wrap.innerHTML = "";
+  if (!players.length) {
+    wrap.innerHTML = '<div class="lb-empty">Inga spelare än, var den första!</div>';
+    return;
+  }
+  players.slice(0, 30).forEach((p, i) => {
+    const h = HOUSES[p.house];
+    const row = document.createElement("div");
+    row.className = "lb-row" + (p.code === syncCode ? " me" : "");
+    row.innerHTML = `
+      <div class="lb-rank">${i + 1}</div>
+      <div class="lb-name-wrap">
+        <span class="lb-name">${p.name}</span>
+        <span class="lb-house">${h ? h.name : "Inget hus"}</span>
+      </div>
+      <div class="lb-points mono">${p.points} p</div>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+function renderHouseLeaderboard(players) {
+  const wrap = byId("lbHouses");
+  wrap.innerHTML = "";
+  const totals = {};
+  Object.keys(HOUSES).forEach(hk => { totals[hk] = { points: 0, count: 0 }; });
+  players.forEach(p => {
+    if (p.house && totals[p.house]) {
+      totals[p.house].points += p.points;
+      totals[p.house].count += 1;
+    }
+  });
+  const rows = Object.keys(HOUSES)
+    .map(hk => ({ hk, ...totals[hk] }))
+    .sort((a, b) => b.points - a.points);
+  rows.forEach((r, i) => {
+    const h = HOUSES[r.hk];
+    const row = document.createElement("div");
+    row.className = "lb-row" + (state.house === r.hk ? " me" : "");
+    row.style.setProperty("--house-color", h.accent);
+    row.innerHTML = `
+      <div class="lb-rank">${i + 1}</div>
+      <div class="lb-name-wrap">
+        <span class="lb-name">${h.name}</span>
+        <span class="lb-house">${r.count} spelare</span>
+      </div>
+      <div class="lb-points mono">${r.points} p</div>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
 function goPractice() {
   state.phase = "practice";
   byId("screen-results").hidden = true;
@@ -2104,18 +2357,6 @@ function toggleDash() {
   if (dashVisible) {
     renderBars(byId("dashBars"));
     renderBadges(byId("badgeRow"));
-  } else {
-    byId("personaEditor").hidden = true;
-  }
-}
-
-function togglePersonaEditor() {
-  const editor = byId("personaEditor");
-  editor.hidden = !editor.hidden;
-  if (!editor.hidden) {
-    byId("nameInput2").value = state.playerName || "";
-    syncHousePickerUI("houseGrid2");
-    syncAvatarPickerUI("avatarGrid2");
   }
 }
 
@@ -2229,7 +2470,6 @@ function endMinigame() {
 byId("btnStart").addEventListener("click", startDiagnostic);
 byId("btnStartAdaptive").addEventListener("click", goQuestPicker);
 byId("btnToggleDash").addEventListener("click", toggleDash);
-byId("btnEditPersona").addEventListener("click", togglePersonaEditor);
 byId("btnNextQuest").addEventListener("click", startNextQuest);
 byId("btnChangeQuestType").addEventListener("click", goQuestPicker);
 byId("btnDashChangeQuest").addEventListener("click", () => {
@@ -2240,6 +2480,23 @@ byId("btnQuestToProfile").addEventListener("click", () => {
   startNextQuest();
   toggleDash();
 });
+function backToQuizWithDash() {
+  byId("screen-scorecard").hidden = true;
+  byId("screen-leaderboard").hidden = true;
+  byId("screen-quiz").hidden = false;
+  dashVisible = true;
+  byId("dashPanel").hidden = false;
+  byId("btnToggleDash").textContent = "Dölj min profil";
+  renderBars(byId("dashBars"));
+  renderBadges(byId("badgeRow"));
+}
+byId("btnShowScorecard").addEventListener("click", goScorecard);
+byId("btnScorecardBack").addEventListener("click", backToQuizWithDash);
+byId("btnShowLeaderboard").addEventListener("click", goLeaderboard);
+byId("btnLbBack").addEventListener("click", backToQuizWithDash);
+byId("btnLbRefresh").addEventListener("click", loadLeaderboard);
+byId("lbTabPlayers").addEventListener("click", () => switchLeaderboardTab("players"));
+byId("lbTabHouses").addEventListener("click", () => switchLeaderboardTab("houses"));
 document.querySelectorAll(".quest-option").forEach(btn => {
   btn.addEventListener("click", () => selectQuestType(btn.dataset.quest));
 });
@@ -2265,11 +2522,6 @@ byId("nameInput").addEventListener("change", () => {
   state.playerName = currentPlayerName();
   saveState();
 });
-byId("nameInput2").addEventListener("change", () => {
-  state.playerName = (byId("nameInput2").value || "").trim() || state.playerName;
-  saveState();
-  renderHouseChip();
-});
 byId("btnCopyCode").addEventListener("click", copySyncCode);
 byId("btnSyncConnect").addEventListener("click", connectSyncCode);
 injectHouseIcons();
@@ -2277,9 +2529,7 @@ injectAvatarPickers();
 injectQuestOptionIcons();
 renderCategoryChoices();
 wireHousePicker("houseGrid");
-wireHousePicker("houseGrid2");
 wireAvatarPicker("avatarGrid");
-wireAvatarPicker("avatarGrid2");
 byId("btnShowLogin").addEventListener("click", () => {
   byId("loginBox").hidden = !byId("loginBox").hidden;
 });
